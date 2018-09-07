@@ -1,9 +1,7 @@
-CFLAGS=-ggdb
-
-bin/main: src/main.c
-	$(CC) $(CFLAGS) -o bin/main src/main.c
+bin/histogram: src/main.c
+	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
-	rm -f bin/main
+	rm -f bin/*
 
 .PHONY: clean

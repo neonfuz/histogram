@@ -20,10 +20,9 @@ typedef struct {
 int read_entries(Entry *entries, int max, int maxlen)
 {
   for (int i=0; i<max; ++i) {
+    entries[i].str = malloc(maxlen+1);
     if (scanf("%d\t%s\n", &entries[i].num, entries[i].str) == EOF)
       return i;
-    entries[i].str = malloc(maxlen+1);
-    printf("%d\t%s\n", entries[i].num, entries[i].str);
     entries[i].str = realloc(entries[i].str, strlen(entries[i].str));
   }
   return max;
@@ -56,16 +55,20 @@ int main (int argc, char **argv)
   int count = read_entries(entries, rows, cols);
   Entry max = get_max_entry(entries, count);
 
-  int width = snprintf(NULL, 0, "%d\t%s ", max.num, max.str);
-  if (width >= cols) {
+  int numwidth = snprintf(NULL, 0, "%d", max.num);
+  int strwidth = snprintf(NULL, 0, "%s", max.str);
+  int width = numwidth + 1 + strwidth + 1;
+  if (width+3 > cols) {
     fprintf(stderr, "Err: Terminal not wide enough\n");
     return -1;
   }
   double divisor = (double)max.num / (cols-width);
 
   for (int i=0; i<count; ++i) {
-    printf("%d\t%s ", entries[i].num, entries[i].str);
-    repeatchar(' ', strlen(max.str)-strlen(entries[i].str));
+    int w = printf("%d", entries[i].num);
+    repeatchar(' ', numwidth+1-w);
+    printf("%s", entries[i].str);
+    repeatchar(' ', strlen(max.str)+1-strlen(entries[i].str));
     repeatchar('=', entries[i].num/divisor);
     putchar('\n');
   }
