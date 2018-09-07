@@ -20,10 +20,13 @@ typedef struct {
 int read_entries(Entry *entries, int max, int maxlen)
 {
   for (int i=0; i<max; ++i) {
-    entries[i].str = malloc(maxlen+1);
-    if (scanf("%d\t%s\n", &entries[i].num, entries[i].str) == EOF)
+    if (scanf("%d\t", &entries[i].num) == EOF)
       return i;
-    entries[i].str = realloc(entries[i].str, strlen(entries[i].str));
+    entries[i].str = NULL;
+    size_t size = 0;
+    int len = getline(&entries[i].str, &size, stdin);
+    if (entries[i].str[len-1] == '\n')
+      entries[i].str[len-1] = '\0';
   }
   return max;
 }
