@@ -1,0 +1,9 @@
+* Histogram
+** Description
+Simple program written in C to display a histogram based on data from stdin. The
+input format is exactly "<number>\t<name>".
+** Example
+~du -s | sort -n | histogram~
+** Todo
+*** TODO Better solution for more input lines than terminal rows
+ - Probably dynamically allocate for more lines
