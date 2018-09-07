@@ -46,6 +46,42 @@ void repeatchar(char c, int num) {
   for(int i=0; i<num; ++i) putchar(c);
 }
 
+// Minimum number of columns in a bar
+#define MINBARCOLS 3
+
+void tableprint(Entry *entries, int count, char *fmt, int maxwidth)
+{
+  Entry max = get_max_entry(entries, count);
+  int numwidth = snprintf(NULL, 0, "%d", max.num);
+  int strwidth = strlen(max.str);
+  int width = numwidth + 1 + strwidth + 1;
+  if (width > maxwidth + MINBARCOLS) {
+    fprintf(stderr, "Err: Terminal not wide enough\n");
+    exit(-1);
+  }
+  double divisor = (double)max.num / (maxwidth-width);
+  int w;
+  for (int i=0; i<count; ++i) {
+    for (int c=0; fmt[c]; ++c) {
+      switch (fmt[c]) {
+      case 'n':
+        w = printf("%d", entries[i].num);
+        repeatchar(' ', numwidth+1-w);
+        break;
+      case 's':
+        printf("%s", entries[i].str);
+        repeatchar(' ', strlen(max.str)+1-strlen(entries[i].str));
+        break;
+      case 'b':
+        repeatchar('=', entries[i].num/divisor);
+        break;
+      default: break;
+      }
+    }
+    putchar('\n');
+  }
+}
+
 int main (int argc, char **argv)
 {
   int rows, cols;
@@ -53,25 +89,7 @@ int main (int argc, char **argv)
 
   Entry entries[rows];
   int count = read_entries(entries, rows, cols);
-  Entry max = get_max_entry(entries, count);
-
-  int numwidth = snprintf(NULL, 0, "%d", max.num);
-  int strwidth = snprintf(NULL, 0, "%s", max.str);
-  int width = numwidth + 1 + strwidth + 1;
-  if (width+3 > cols) {
-    fprintf(stderr, "Err: Terminal not wide enough\n");
-    return -1;
-  }
-  double divisor = (double)max.num / (cols-width);
-
-  for (int i=0; i<count; ++i) {
-    int w = printf("%d", entries[i].num);
-    repeatchar(' ', numwidth+1-w);
-    printf("%s", entries[i].str);
-    repeatchar(' ', strlen(max.str)+1-strlen(entries[i].str));
-    repeatchar('=', entries[i].num/divisor);
-    putchar('\n');
-  }
+  tableprint(entries, count, "nsb", cols);
 
   return 0;
 }
