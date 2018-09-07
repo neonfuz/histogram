@@ -1,4 +1,5 @@
 bin/histogram: src/main.c
+	mkdir -p bin/
 	$(CC) $(CFLAGS) -o $@ $^
 
 clean:
