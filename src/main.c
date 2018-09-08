@@ -17,7 +17,7 @@ typedef struct {
   char *str;
 } Entry;
 
-int read_entries(Entry *entries, int max, int maxlen)
+int read_entries(Entry *entries, int max)
 {
   for (int i=0; i<max; ++i) {
     if (scanf("%d\t", &entries[i].num) == EOF)
@@ -91,7 +91,7 @@ int main (int argc, char **argv)
   get_win_size(&rows, &cols);
 
   Entry entries[rows];
-  int count = read_entries(entries, rows, cols);
+  int count = read_entries(entries, rows);
   tableprint(entries, count, "nsb", cols);
 
   return 0;
